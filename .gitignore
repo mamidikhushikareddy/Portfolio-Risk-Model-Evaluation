@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.streamlit/secrets.toml
+# local data and generated outputs
+data/cache/*
+!data/cache/.gitkeep
+data/*.duckdb
+outputs/*
+!outputs/.gitkeep
+.vscode/
+.idea/
+.DS_Store

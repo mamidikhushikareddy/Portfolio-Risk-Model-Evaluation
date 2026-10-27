@@ -1,0 +1,10 @@
+pandas>=2.2
+numpy>=1.26
+scipy>=1.11
+statsmodels>=0.14
+duckdb>=0.10
+streamlit>=1.66
+plotly>=5.18
+openpyxl>=3.1.2
+yfinance>=0.2.40
+pytest>=7.4
