@@ -1,53 +1,250 @@
-# Multi-Asset Portfolio Risk & Model Validation Platform
+<div align="center">
 
-A free, local research platform that measures the risk of a multi-asset ETF portfolio **and tests whether those risk measures can be trusted**.
+# 📉 Multi-Asset Portfolio Risk & Model Validation Platform
+
+### *Measure portfolio risk. Then test whether the measurement can be trusted.*
+
+A free, local research platform that quantifies the risk of a multi-asset ETF portfolio, shows **what drives it**, and validates **how reliable the risk measures themselves are**, using out-of-sample backtests, statistical tests, and stress scenarios.
+
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Tests-66%20passing-success?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/App-Streamlit-FF4B4B?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Data-Free%20Sources%20Only-2E8B57?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Purpose-Educational%20Research-8A2BE2?style=for-the-badge" />
+</p>
+
+**Current Version:** **v0.1**
+
 *Historical research for education. Not investment advice.*
 
-## The challenge
-- A single VaR or volatility figure is easy to compute and easy to over-trust. A model that looks fine can be wrong in the tail, and a handful of breaches proves little.
-- Free market data is messy (gaps, duplicates, late-listed ETFs, holidays). Forward-filling prices or zero-filling returns quietly corrupts every downstream number.
-- Backtests are easily contaminated by lookahead bias, and institutional tools (Bloomberg, Aladdin) are not available to an individual analyst.
+### 🧠 Don't just calculate risk. Validate it.
 
-## The solution
-| Problem | What the platform does |
-|---|---|
-| Untrusted data | Ingests Yahoo Finance (unofficial), FRED and local CSV with provenance and caching; reports duplicates, gaps, non-positive prices, large-move flags and short histories as JSON and Markdown. **Never fills prices or treats missing returns as zero.** |
-| What drives risk | Volatility, drawdown, beta (OLS with Newey-West 95% interval), Sharpe/Sortino, and Euler risk contributions that reconcile exactly to portfolio volatility. |
-| Reliability of risk measures | Historical and parametric VaR and ES at 95%/99%; rolling out-of-sample one-day forecasts that use only prior data; breach rate with exact confidence interval; Kupiec and Christoffersen tests. ES is described, not claimed as validated. |
-| Behaviour in crises | Replay of 2008, March 2020 and 2022 using observed prices only (withheld, with a reason, if data is missing); separate labelled hypothetical shocks; documented duration approximation for rate moves. |
-| Delivery | 7-page Streamlit app, formatted Excel workbook (LibreOffice-compatible), vendor-neutral CSV interface, DuckDB storage, one-page research brief generated only from real, verified data. |
+</div>
 
-## Impact: what it reveals
-`python examples/model_risk_demo.py` simulates 5,000 days of fat-tailed returns (Student-t, 3 d.o.f., 1% daily volatility; synthetic and seeded) so the true process is known. 99% one-day VaR, 500-day rolling window:
+---
 
-| Model | Breaches (expected 45) | Breach rate (95% CI) | Kupiec p | Realised loss on breach days / forecast ES |
+# ✨ Features
+
+### 🧹 Data Quality Engine
+Ingests Yahoo Finance, FRED and local CSV data with provenance, caching and a JSON + Markdown quality report. Flags duplicates, gaps, non-positive prices, large moves and short histories. **Never forward-fills prices or treats missing returns as zero.**
+
+### 📈 Portfolio Analytics
+Volatility, drawdown and duration, beta with a Newey-West 95% interval, Sharpe, Sortino, correlation and covariance, plus Euler risk contributions that reconcile exactly to portfolio volatility.
+
+### 🎯 VaR & Expected Shortfall
+Historical and parametric VaR/ES at 95% and 99%, reported as positive loss thresholds.
+
+### 🧪 Model Validation
+Rolling out-of-sample one-day forecasts that use only prior data, with breach rates, exact confidence intervals, Kupiec and Christoffersen tests. ES is described, never claimed as validated by a VaR test.
+
+### 🌪 Stress Scenarios
+Replays the 2008 crisis, the March 2020 shock and the 2022 rate shock using observed prices only. If data is missing, the result is withheld with a reason. Hypothetical shocks and a documented duration approximation are kept separate and labelled.
+
+### 📊 Streamlit Research App
+Seven pages with allocation controls, automatic weight validation, and recalculation of every dependent metric.
+
+### 📑 Excel Reporting
+Formatted multi-sheet `.xlsx` export (LibreOffice-compatible) with units, source metadata and conditional formatting.
+
+### 🔌 Vendor-Neutral CSV Interface
+Works offline and supports comparison with authorised institutional output if access ever exists.
+
+---
+
+# 🚀 Why This Project?
+
+Most risk tools **produce a number.**
+
+**This platform tests whether the number deserves trust.**
+
+It addresses three problems:
+
+- A single VaR figure is easy to compute and easy to over-trust.
+- Free market data is messy, and silent gap-filling corrupts every downstream result.
+- Backtests are easily contaminated by lookahead bias.
+
+> **Make risk measurement auditable, honest about uncertainty, and reproducible.**
+
+---
+
+# 🔬 Impact: What It Reveals
+
+`python examples/model_risk_demo.py` simulates 5,000 days of fat-tailed returns (Student-t, 3 d.o.f., 1% daily volatility; **synthetic and seeded**) so the true process is known. 99% one-day VaR, 500-day rolling window:
+
+| Model | Breaches (expected 45) | Breach rate (95% CI) | Kupiec p-value | Realised loss on breach days ÷ forecast ES |
 |---|---|---|---|---|
-| Historical | 55 | 1.22% (0.92%-1.59%) | 0.148 | 0.95 |
-| Parametric (normal) | 88 | 1.96% (1.57%-2.40%) | <0.0001 | 1.27 |
+| Historical | 55 | 1.22% (0.92%–1.59%) | 0.148 | 0.95 |
+| Parametric (normal) | 88 | 1.96% (1.57%–2.40%) | < 0.0001 | 1.27 |
 
-The normal model breaches almost twice as often as promised, and on breach days realised losses exceeded its forecast ES by 27% on average. The historical model is not rejected, but its rate is still above 1%: with 45 expected breaches the test has limited power, which is why the platform reports intervals and tests rather than a pass/fail flag.
+- The normal model breaches almost **twice as often as promised**, and on breach days realised losses exceeded its forecast ES by **27%** on average.
+- The historical model is not rejected, but its rate is still above 1%. With 45 expected breaches the test has limited power, so the platform reports intervals and tests rather than a simple pass/fail.
 
-Running the pipeline on real data (`download`, then `brief`) produces the portfolio findings in `outputs/research_brief.md`; the generator refuses synthetic data and data with a FAIL quality status.
+> Findings on real market data are generated by running `download` then `brief`. The brief generator refuses synthetic data and data with a FAIL quality status.
 
-## Engineering quality
-- **66 tests**, all offline and deterministic (synthetic fixtures): returns, annualisation, drawdown, beta, risk-contribution reconciliation, VaR/ES on known samples, breach counting, forecast timing, a lookahead test that mutates future returns, weights, duplicates, missing dates, stress maths, Excel contents and formats, CLI, and the Streamlit UI headless.
-- An adversarial review found and fixed: a crash in the Normalise button, stale cached data reused indefinitely, Excel cells showing a 1.5% loss as "0", and drawdowns that bridged data gaps. Each has a regression test (`tests/test_regressions.py`).
-- Tested on Python 3.12 with pandas 3.0 and pandas 2.2; Excel output round-tripped through LibreOffice. CI runs Linux and Windows (`.github/workflows/tests.yml`).
+---
 
-## Quick start (Windows PowerShell)
+# 🛠 Tech Stack
+
+| Layer | Technologies |
+|--------|--------------|
+| **Language** | Python |
+| **Data & Numerics** | pandas, NumPy, SciPy, statsmodels |
+| **Storage** | DuckDB, CSV cache |
+| **UI** | Streamlit, Plotly |
+| **Reporting** | openpyxl |
+| **Data Sources** | yfinance (unofficial), FRED public CSV, local CSV |
+| **Testing & Quality** | pytest, Ruff, GitHub Actions (Linux + Windows) |
+
+---
+
+# 🏗 Architecture
+
+```text
+      Yahoo Finance • FRED • Local CSV
+                  │
+                  ▼
+     Ingestion  →  Cache + Provenance
+                  │
+                  ▼
+        Validation (quality report)
+                  │
+                  ▼
+     Analytics • VaR/ES • Backtesting • Stress
+                  │
+         ┌────────┴────────┐
+         ▼                 ▼
+   Streamlit App      CLI → Excel / Brief
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+.
+├── src/riskplatform/   Core library
+│   ├── ingestion.py        Downloads, cache, CSV import
+│   ├── validation.py       Data-quality diagnostics
+│   ├── analytics.py        Returns, drawdown, beta, risk contributions
+│   ├── risk_measures.py    VaR and Expected Shortfall
+│   ├── backtesting.py      Rolling forecasts, Kupiec, Christoffersen
+│   ├── stress.py           Event replay, shocks, duration approximation
+│   ├── pipeline.py         End-to-end analysis
+│   ├── reporting.py        Excel export and research brief
+│   ├── store.py            DuckDB persistence
+│   └── cli.py              Command line interface
+├── app/                Streamlit application
+├── examples/           Model-risk demonstration
+├── tests/              Offline, deterministic test suite
+├── docs/               Methodology, workflow, brief template
+└── data/               Local cache and imports (git-ignored)
+```
+
+---
+
+# ⚙️ Prerequisites
+
+- Python **3.10+** (developed on 3.12; CI runs 3.11 and 3.12)
+- Internet access for live downloads *(optional: CSV import and the synthetic demo work offline)*
+
+---
+
+# 🚀 Getting Started (Windows PowerShell)
+
+## 1️⃣ Create an Environment and Install
+
 ```powershell
-py -3.11 -m venv .venv; .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt; pip install -e .
-python -m pytest -m "not app"                       # offline suite (about a minute); omit -m to include UI tests
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -e .
+```
+
+If activation is blocked: `Set-ExecutionPolicy -Scope Process Bypass`
+
+## 2️⃣ Run the Tests
+
+```powershell
+python -m pytest -m "not app"
+```
+
+Omit `-m "not app"` to include the headless UI tests (slower).
+
+## 3️⃣ Download Data
+
+```powershell
 python -m riskplatform.cli download --start 2005-01-01
+```
+
+Writes the cache to `data\cache` and the quality report to `outputs\data_quality_report.json` and `.md`.
+
+## 4️⃣ Export, Brief and App
+
+```powershell
 python -m riskplatform.cli export-excel --out outputs\portfolio_risk_report.xlsx
 python -m riskplatform.cli brief --out outputs\research_brief.md
 streamlit run app\streamlit_app.py
 ```
-No internet? Use `export-excel --synthetic` (clearly labelled demo data) or `--csv data\imports\prices.csv`. Custom weights: `--weights "VTI=40,AGG=40,GLD=20" --rf 0.02`.
 
-## Limitations
-yfinance is unofficial and can break; ETF histories are short; the chosen ETFs are survivors; no transaction costs, taxes or liquidity effects; results depend on the sample window; normal VaR understates fat tails; Excel formulas and Python outputs can differ in rounding. Details: `docs/METHODOLOGY.md`. Comparing against authorised institutional output: `docs/INSTITUTIONAL_WORKFLOW.md`.
+The app opens at `http://localhost:8501`.
 
-## Layout
-`src/riskplatform/` ingestion, validation, analytics, risk_measures, backtesting, stress, pipeline, reporting, store, cli | `app/` Streamlit | `examples/` model-risk demo | `tests/` | `docs/`
+---
+
+# 📴 Offline or Custom Data
+
+```powershell
+# Clearly labelled synthetic demo (not market data)
+python -m riskplatform.cli export-excel --synthetic --out outputs\synthetic_demo.xlsx
+
+# Your own prices (wide: date,VTI,EFA,... or long: date,ticker,adj_close)
+python -m riskplatform.cli export-excel --csv data\imports\prices.csv --out outputs\from_csv.xlsx
+
+# Custom allocation and risk-free rate
+python -m riskplatform.cli export-excel --weights "VTI=40,AGG=40,GLD=20" --rf 0.02 --out outputs\custom.xlsx
+```
+
+Duplicate dates raise an error unless you pass `--duplicates keep_last` or `keep_first`.
+
+---
+
+# 📦 Available Commands
+
+| Command | Description |
+|----------|-------------|
+| `python -m pytest` | Run the full test suite |
+| `python -m pytest -m "not app"` | Run the offline suite without UI tests |
+| `python -m riskplatform.cli download` | Download prices and yields, write quality report |
+| `python -m riskplatform.cli quality --csv FILE` | Validate a price CSV |
+| `python -m riskplatform.cli export-excel` | Export the formatted Excel workbook |
+| `python -m riskplatform.cli brief` | Generate the research brief (real data only) |
+| `python examples/model_risk_demo.py` | Reproduce the model-risk demonstration |
+| `streamlit run app\streamlit_app.py` | Launch the research app |
+
+---
+
+# 🖥 App Pages
+
+1. Portfolio overview
+2. Asset allocation and risk contribution
+3. Historical risk and drawdown
+4. VaR, expected shortfall and backtesting
+5. Stress scenarios
+6. Data quality and methodology
+7. Research summary and exports
+
+---
+
+<div align="center">
+
+## 📉 Risk Platform
+
+### *Helping risk numbers earn the trust they're given.*
+
+**Current Release:** **v0.1**
+
+⭐ **If you found this project interesting, consider giving it a star!**
+
+*Educational historical research. Not investment advice. Past results do not predict future results.*
+
+</div>
